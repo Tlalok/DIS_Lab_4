@@ -15,6 +15,7 @@ namespace ServerUI
         public ServerForm()
         {
             InitializeComponent();
+            new Server(this).Run();
         }
     }
 }

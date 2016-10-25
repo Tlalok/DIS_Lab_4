@@ -7,23 +7,23 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Core.Entities;
+using Core.Extensions;
 
 namespace ServerUI
 {
-    public class ThreadClass
+    public class RequestHandler
     {
-        private Form1 form = null;
-        private ASCIIEncoding asciiEncoding;
+        private ServerForm form = null;
         private NetworkStream networkStream;
         private string fileName;
         private int fileCount;
 
-        private List<ICommand> commands;
+        private readonly List<ICommand> commands;
 
-        public ThreadClass(NetworkStream networkStream, String fileName, int fileCount, Form1 form)
+        public RequestHandler(NetworkStream networkStream, string fileName, int fileCount, ServerForm form)
         {
             this.networkStream = networkStream;
-            this.asciiEncoding = new ASCIIEncoding();
             this.fileName = fileName;
             this.fileCount = fileCount;
             this.form = form;
@@ -44,20 +44,14 @@ namespace ServerUI
 
         private void OperationHandler()
         {
-            //Создаем новую переменную типа byte[]
-            var receivedData = new byte[256];
-            //С помощью сетевого потока считываем в переменную received данные от клиента
-            networkStream.Read(receivedData, 0, receivedData.Length);
-            var receivedString = asciiEncoding.GetString(receivedData);
-            var i = receivedString.IndexOf("|", 0);
-            var commandName = receivedString.Substring(0, i);
-            var conmmandData = receivedString.Substring(i + 1).TrimStart('|');
+            var receivedString = networkStream.ReadAsciiString();
+            var request = receivedString.Deserialize<Request>();
 
             foreach (var command in commands)
             {
-                if (command.Applicable(commandName))
+                if (command.Applicable(request.CommandName))
                 {
-                    command.Execute(conmmandData);
+                    command.Execute(request);
                     break;
                 }
             }

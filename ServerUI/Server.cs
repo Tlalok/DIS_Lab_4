@@ -11,19 +11,11 @@ namespace ServerUI
 {
     public class Server
     {
-        //Путь к файлу, в котором будет храниться информация
-        private String fileName = "d:\\file1.txt";
+        private string fileName = "data.xml";
         private int fileCount = 0;
-        //Создание объекта класса TcpListener
-        private TcpListener listener = null;
-        //Создание объекта класса Socket
-        private Socket socket = null;
-        //Создание объекта класса NetworkStream
-        private NetworkStream ns = null;
-        //Создание объекта класса кодировки ASCIIEncoding
-        private ASCIIEncoding ae = null;
 
         private ServerForm form;
+        private Thread serverThread;
 
         public Server(ServerForm form)
         {
@@ -32,23 +24,27 @@ namespace ServerUI
 
         public void Run()
         {
-            // Создаем новый TCP_Listener который принимает запросы от любых IP адресов и слушает по порту 5555
-            listener = new TcpListener(IPAddress.Any, 5555);
-            // Активация listen’ера                     
+            serverThread = new Thread(ServerLoop);
+        }
+
+        private void ServerLoop()
+        {
+            var listener = new TcpListener(IPAddress.Any, 5555);
             listener.Start();
 
             while (true)
             {
-                socket = listener.AcceptSocket();
+                var socket = listener.AcceptSocket();
 
                 if (socket.Connected)
                 {
-                    ns = new NetworkStream(socket);
-                    ae = new ASCIIEncoding();
-                    RequestHandler threadClass = new RequestHandler(ns, fileName, fileCount, form);
-                    Thread thread = threadClass.Start();
+                    var ns = new NetworkStream(socket);
+                    var requestHandler = new RequestHandler(ns, fileName, fileCount, form);
+                    Thread thread = requestHandler.Start();
                 }
             }
         }
+
+
     }
 }

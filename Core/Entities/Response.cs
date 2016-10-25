@@ -8,6 +8,6 @@ namespace Core.Entities
 {
     public class Response
     {
-        public List<Student> students;
+        public List<Student> Students;
     }
 }

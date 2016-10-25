@@ -43,7 +43,8 @@
     <Compile Include="Entities\Request.cs" />
     <Compile Include="Entities\Response.cs" />
     <Compile Include="Entities\Student.cs" />
-    <Compile Include="Entities\Subjectmark.cs" />
+    <Compile Include="Entities\SubjectMark.cs" />
+    <Compile Include="Extensions\NetworkStreamExtensions.cs" />
     <Compile Include="Extensions\XmlSerializerExtention.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

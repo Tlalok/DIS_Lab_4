@@ -5,6 +5,9 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Entities;
+using Core.Extensions;
+using ServerUI.Entities;
 
 namespace ServerUI.Commands
 {
@@ -25,15 +28,15 @@ namespace ServerUI.Commands
             return string.Equals(commandName, name, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void Execute(string commandData)
+        public void Execute(Request request)
         {
-            var asciiEncoding = new ASCIIEncoding();
-            var toSent = new byte[256];
-            //Создаем объект класса FileStream для последующего чтения информации из файла
             var fileData = File.ReadAllText(fileName);
-            //Запись в переменную sent содержания прочитанного файла
-            toSent = asciiEncoding.GetBytes(fileData);
-            //Отправка информации клиенту
+            var students = fileData.Deserialize<StudentFile>().Students;
+            var response = new Response
+            {
+                Students = students
+            };
+            var toSent = Encoding.ASCII.GetBytes(response.Serialize());
             ns.Write(toSent, 0, toSent.Length);
         }
     }

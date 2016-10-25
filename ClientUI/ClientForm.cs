@@ -15,6 +15,9 @@ namespace ClientUI
         public Form1()
         {
             InitializeComponent();
+            var client = new Client();
+            client.OnRequestStudents += r => MessageBox.Show(string.Join(", ", r.Students.Select(s => s.Name)));
+            client.RequestStudents();
         }
     }
 }

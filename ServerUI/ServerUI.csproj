@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ViewCommand.cs" />
+    <Compile Include="Entities\StudentFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestHandler.cs" />
@@ -79,6 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{292cb2bd-94c7-4456-880d-df5d8750df15}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
