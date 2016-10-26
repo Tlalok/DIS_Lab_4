@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Entities;
 using Core.Extensions;
+using System.Net;
 
 namespace ClientUI
 {
@@ -13,13 +14,14 @@ namespace ClientUI
     {
         //private TcpClient tcp_client = new TcpClient("localhost", 5555);
         private TcpClient tcp_client = new TcpClient();
-        //private TcpClient tcp_client = new TcpClient("192.168.0.1", 5555);
+        private IPEndPoint myEndpoint = new IPEndPoint(IPAddress.Loopback, 11000);
         public event Action<Response> OnRequestStudents;
 
         public Client()
         {
             OnRequestStudents += r => { };
-            tcp_client.Connect("localhost", 5555);
+            //tcp_client.Connect("localhost", 5555);
+            tcp_client.Connect(myEndpoint);
         }
 
         public void RequestStudents()

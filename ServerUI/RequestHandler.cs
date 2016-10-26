@@ -52,7 +52,7 @@ namespace ServerUI
                 if (command.Applicable(request.CommandName))
                 {
                     command.Execute(request);
-                    break;
+                    return;
                 }
             }
 
