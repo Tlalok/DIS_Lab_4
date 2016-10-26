@@ -7,28 +7,29 @@ using System.Threading.Tasks;
 using Core.Entities;
 using Core.Extensions;
 using System.Net;
+using Core.Constants;
 
 namespace ClientUI
 {
     public class Client
     {
-        //private TcpClient tcp_client = new TcpClient("localhost", 5555);
         private TcpClient tcp_client = new TcpClient();
-        private IPEndPoint myEndpoint = new IPEndPoint(IPAddress.Loopback, 11000);
+        private IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 11000);
         public event Action<Response> OnRequestStudents;
+        public event Action<Response> OnCreateStudent;
 
         public Client()
         {
             OnRequestStudents += r => { };
-            //tcp_client.Connect("localhost", 5555);
-            tcp_client.Connect(myEndpoint);
+            OnCreateStudent += r => { };
+            tcp_client.Connect(endpoint);
         }
 
         public void RequestStudents()
         {
             var request = new Request();
-            request.CommandName = "view";
-            byte[] sent = Encoding.ASCII.GetBytes(request.Serialize());
+            request.CommandName = Commands.View;
+            byte[] sent = Encoding.UTF8.GetBytes(request.Serialize());
             var ns = tcp_client.GetStream();
             ns.Write(sent, 0, sent.Length);
 
@@ -39,6 +40,24 @@ namespace ClientUI
             //Отображеем служебную информацию в клиентском ListBox
             //listBox1.Items.Add(status);
 
+        }
+
+        public void CreateStudent(Student student)
+        {
+            if (student == null)
+            {
+                throw new ArgumentNullException(nameof(student));
+            }
+
+            var request = new Request();
+            request.CommandName = Commands.Create;
+            request.Student = student;
+            byte[] sent = Encoding.UTF8.GetBytes(request.Serialize());
+            var ns = tcp_client.GetStream();
+            ns.Write(sent, 0, sent.Length);
+
+            var response = ns.ReadAsciiString().Deserialize<Response>();
+            OnCreateStudent(response);
         }
     }
 }

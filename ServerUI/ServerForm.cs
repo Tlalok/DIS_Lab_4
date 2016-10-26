@@ -12,10 +12,18 @@ namespace ServerUI
 {
     public partial class ServerForm : Form
     {
+        private Server server;
+
         public ServerForm()
         {
             InitializeComponent();
-            new Server(this).Run();
+            server = new Server(this);
+            server.Run();
+        }
+
+        ~ServerForm()
+        {
+            server.Stop();
         }
     }
 }

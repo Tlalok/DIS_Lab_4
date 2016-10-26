@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Entities;
-using Core.Extensions;
-using ServerUI.Entities;
+using System.Net.Sockets;
 using Core.Constants;
+using System.IO;
+using ServerUI.Entities;
+using Core.Extensions;
 
 namespace ServerUI.Commands
 {
-    public class ViewCommand : ICommand
+    public class CreateCommand : ICommand
     {
-        private readonly string name = Core.Constants.Commands.View;
+        private readonly string name = Core.Constants.Commands.Create;
         private readonly NetworkStream networkStream;
         private readonly string fileName;
 
-        public ViewCommand(NetworkStream networkStream, string fileName)
+        public CreateCommand(NetworkStream networkStream, string fileName)
         {
             this.networkStream = networkStream;
             this.fileName = fileName;
@@ -39,7 +39,12 @@ namespace ServerUI.Commands
             {
                 var fileData = File.ReadAllText(fileName);
                 var students = fileData.Deserialize<StudentFile>().Students;
-                response.Students = students;
+                if (students.Any(st => string.Equals(st.Name, request.Student.Name, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    throw new ArgumentException($"Student with name {request.Student.Name} is already exists.");
+                }
+                students.Add(request.Student);
+                File.WriteAllText(fileName, students.Serialize());
             }
             catch (Exception e)
             {

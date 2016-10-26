@@ -13,10 +13,12 @@ namespace ServerUI
     {
         private string fileName = "data.xml";
         private int fileCount = 0;
-        private IPEndPoint myEndpoint = new IPEndPoint(IPAddress.Loopback, 11000);
+        private IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 11000);
 
         private ServerForm form;
         private Thread serverThread;
+
+        private bool end = false;
 
         public Server(ServerForm form)
         {
@@ -25,32 +27,39 @@ namespace ServerUI
 
         public void Run()
         {
-            serverThread = new Thread(new ThreadStart(ServerLoop));
+            end = false;
+            serverThread = new Thread(ServerLoop);
             serverThread.Start();
         }
 
         private void ServerLoop()
         {
-            //var listener = new TcpListener(IPAddress.Any, 5555);
-            var listener = new TcpListener(myEndpoint);
+            var listener = new TcpListener(endpoint);
             listener.Start();
 
-            while (true)
+            while (!end)
             {
                 //if (listener.Pending())
                 //{
                     //var socket = listener.AcceptSocket();
-                    var tcpClient = listener.AcceptTcpClient();
+                    var client = listener.AcceptTcpClient();
 
                     //if (socket.Connected)
                     //{
                     //var ns = new NetworkStream(socket);
-                    var ns = tcpClient.GetStream();
+                    var ns = client.GetStream();
                     var requestHandler = new RequestHandler(ns, fileName, fileCount, form);
                     Thread thread = requestHandler.Start();
                     //}
                 //}
             }
+
+            listener.Stop();
+        }
+
+        public void Stop()
+        {
+            end = true;
         }
 
 

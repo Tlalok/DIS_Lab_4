@@ -30,7 +30,8 @@ namespace ServerUI
 
             commands = new List<ICommand>
             {
-                new ViewCommand(networkStream, fileName)
+                new ViewCommand(networkStream, fileName),
+                new CreateCommand(networkStream, fileName)
             };
         }
 

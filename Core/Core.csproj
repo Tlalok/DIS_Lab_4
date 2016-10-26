@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants\Commands.cs" />
+    <Compile Include="Constants\OperationStatus.cs" />
     <Compile Include="Entities\Request.cs" />
     <Compile Include="Entities\Response.cs" />
     <Compile Include="Entities\Student.cs" />

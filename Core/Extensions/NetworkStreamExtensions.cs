@@ -21,7 +21,7 @@ namespace Core.Extensions
             do
             {
                 var numberOfBytesRead = networkStream.Read(myReadBuffer, 0, myReadBuffer.Length);
-                myCompleteMessage.AppendFormat("{0}", Encoding.ASCII.GetString(myReadBuffer, 0, numberOfBytesRead));
+                myCompleteMessage.AppendFormat("{0}", Encoding.UTF8.GetString(myReadBuffer, 0, numberOfBytesRead));
             } while (networkStream.DataAvailable);
             return myCompleteMessage.ToString();
         }
