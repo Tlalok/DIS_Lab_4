@@ -29,6 +29,7 @@ namespace ServerUI
         {
             end = false;
             serverThread = new Thread(ServerLoop);
+            serverThread.IsBackground = true;
             serverThread.Start();
         }
 
@@ -39,19 +40,13 @@ namespace ServerUI
 
             while (!end)
             {
-                //if (listener.Pending())
-                //{
-                    //var socket = listener.AcceptSocket();
-                    var client = listener.AcceptTcpClient();
-
-                    //if (socket.Connected)
-                    //{
-                    //var ns = new NetworkStream(socket);
+                var client = listener.AcceptTcpClient();
+                if (client.Connected)
+                {
                     var ns = client.GetStream();
                     var requestHandler = new RequestHandler(ns, fileName, fileCount, form);
                     Thread thread = requestHandler.Start();
-                    //}
-                //}
+                }
             }
 
             listener.Stop();

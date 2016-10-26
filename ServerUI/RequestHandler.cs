@@ -39,13 +39,14 @@ namespace ServerUI
         {
             //Thread thread = new Thread(new ThreadStart(ThreadOperations));
             var thread = new Thread(OperationHandler);
+            thread.IsBackground = true;
             thread.Start();
             return thread;
         }
 
         private void OperationHandler()
         {
-            var receivedString = networkStream.ReadAsciiString();
+            var receivedString = networkStream.ReadUtf8String();
             var request = receivedString.Deserialize<Request>();
 
             foreach (var command in commands)

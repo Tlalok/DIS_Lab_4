@@ -44,7 +44,11 @@ namespace ServerUI.Commands
                     throw new ArgumentException($"Student with name {request.Student.Name} is already exists.");
                 }
                 students.Add(request.Student);
-                File.WriteAllText(fileName, students.Serialize());
+                var studentFile = new StudentFile
+                {
+                    Students = students
+                };
+                File.WriteAllText(fileName, studentFile.Serialize());
             }
             catch (Exception e)
             {

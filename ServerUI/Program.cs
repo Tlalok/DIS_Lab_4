@@ -22,28 +22,33 @@ namespace ServerUI
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new ServerForm());
 
-            //var students = new List<Student>();
-            //students.Add(new Student
-            //{
-            //    Name = "Name 1",
-            //    SubjectMarks = new List<SubjectMark>
-            //    {
-            //        new SubjectMark("Math", 10)
-            //    }
-            //});
-            //students.Add(new Student
-            //{
-            //    Name = "Name 2",
-            //    SubjectMarks = new List<SubjectMark>
-            //    {
-            //        new SubjectMark("Physics", 8)
-            //    }
-            //});
-            //var xml = new StudentFile
-            //{
-            //    Students = students
-            //}.Serialize();
-            //File.WriteAllText("data.xml", xml);
+            //GenerateTestData();
+        }
+
+        private static void GenerateTestData()
+        {
+            var students = new List<Student>();
+            students.Add(new Student
+            {
+                Name = "Name 1",
+                SubjectMarks = new List<SubjectMark>
+                {
+                    new SubjectMark("Math", 10)
+                }
+            });
+            students.Add(new Student
+            {
+                Name = "Name 2",
+                SubjectMarks = new List<SubjectMark>
+                {
+                    new SubjectMark("Physics", 8)
+                }
+            });
+            var xml = new StudentFile
+            {
+                Students = students
+            }.Serialize();
+            File.WriteAllText("data.xml", xml);
         }
     }
 }

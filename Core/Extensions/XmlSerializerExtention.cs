@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace Core.Extensions
@@ -68,8 +69,16 @@ namespace Core.Extensions
 
             using (var w = new StringWriter(builder, CultureInfo.InvariantCulture))
             {
-                serializer.Serialize(w, value, namespaces);
-                return builder.ToString();
+                XmlWriterSettings settings = new XmlWriterSettings();
+                //settings.Encoding = new UnicodeEncoding(false, false); // no BOM in a .NET string
+                settings.Encoding = Encoding.UTF8;
+                settings.Indent = true;
+                settings.OmitXmlDeclaration = true;
+                using (var xmlWriter = XmlWriter.Create(w, settings))
+                {
+                    serializer.Serialize(xmlWriter, value, namespaces);
+                    return builder.ToString();
+                }
             }
         }
 

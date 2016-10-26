@@ -9,7 +9,7 @@ namespace Core.Extensions
 {
     public static class NetworkStreamExtensions
     {
-        public static string ReadAsciiString(this NetworkStream networkStream)
+        public static string ReadUtf8String(this NetworkStream networkStream)
         {
             if (!networkStream.CanRead)
             {
