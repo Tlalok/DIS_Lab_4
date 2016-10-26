@@ -13,38 +13,27 @@ namespace ClientUI
 {
     public class Client
     {
-        private TcpClient tcp_client;
-        private IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 11000);
+        private IPEndPoint endpoint;
         public event Action<Response> OnRequestStudents;
         public event Action<Response> OnCreateStudent;
+        public event Action<Response> OnUpdateStudent;
+        public event Action<Response> OnDeleteStudent;
 
-        public Client()
+        public Client(IPEndPoint endpoint)
         {
+            this.endpoint = endpoint;
             OnRequestStudents += r => { };
             OnCreateStudent += r => { };
-            //tcp_client.Connect(endpoint);
         }
 
         public void RequestStudents()
         {
-            //var tcp_client = new TcpClient(endpoint);
-            tcp_client = new TcpClient();
-            tcp_client.Connect(endpoint);
-            var request = new Request();
-            request.CommandName = Commands.View;
-            byte[] sent = Encoding.UTF8.GetBytes(request.Serialize());
-            var ns = tcp_client.GetStream();
-            ns.Write(sent, 0, sent.Length);
-
-            var response = ns.ReadUtf8String().Deserialize<Response>();
+            var request = new Request {CommandName = Commands.View};
+            var response = SendRequest(request);
             OnRequestStudents(response);
-
-            tcp_client.Close();
-
             //String status = "=>Command sent:view data";
             //Отображеем служебную информацию в клиентском ListBox
             //listBox1.Items.Add(status);
-
         }
 
         public void CreateStudent(Student student)
@@ -53,19 +42,25 @@ namespace ClientUI
             {
                 throw new ArgumentNullException(nameof(student));
             }
-            //var tcp_client = new TcpClient(endpoint);
-            tcp_client = new TcpClient();
-            tcp_client.Connect(endpoint);
-            var request = new Request();
-            request.CommandName = Commands.Create;
-            request.Student = student;
-            byte[] sent = Encoding.UTF8.GetBytes(request.Serialize());
-            var ns = tcp_client.GetStream();
-            ns.Write(sent, 0, sent.Length);
-
-            var response = ns.ReadUtf8String().Deserialize<Response>();
+            var request = new Request
+            {
+                CommandName = Commands.Create,
+                Student = student
+            };
+            var response = SendRequest(request);
             OnCreateStudent(response);
-            tcp_client.Close();
+        }
+
+        private Response SendRequest(Request request)
+        {
+            var tcpClient = new TcpClient();
+            tcpClient.Connect(endpoint);
+            var toSent = Encoding.UTF8.GetBytes(request.Serialize());
+            var networkStream = tcpClient.GetStream();
+            networkStream.Write(toSent, 0, toSent.Length);
+            var response = networkStream.ReadUtf8String().Deserialize<Response>();
+            tcpClient.Close();
+            return response;
         }
     }
 }

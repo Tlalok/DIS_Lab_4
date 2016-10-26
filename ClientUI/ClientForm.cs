@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,7 +21,7 @@ namespace ClientUI
         {
             InitializeComponent();
 
-            client = new Client();
+            client = new Client(new IPEndPoint(IPAddress.Loopback, 11000));
             client.OnRequestStudents += r => MessageBox.Show(string.Join(", ", r.Students.Select(s => s.Name)));
             client.OnCreateStudent += r => MessageBox.Show(r.Status.ToString() + " " + r.ErrorMessage);
         }
