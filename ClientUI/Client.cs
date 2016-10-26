@@ -24,19 +24,22 @@ namespace ClientUI
             this.endpoint = endpoint;
             OnRequestStudents += r => { };
             OnCreateStudent += r => { };
+            OnUpdateStudent += r => { };
+            OnDeleteStudent += r => { };
         }
 
-        public void RequestStudents()
+        public Response RequestStudents()
         {
             var request = new Request {CommandName = Commands.View};
             var response = SendRequest(request);
             OnRequestStudents(response);
+            return response;
             //String status = "=>Command sent:view data";
             //Отображеем служебную информацию в клиентском ListBox
             //listBox1.Items.Add(status);
         }
 
-        public void CreateStudent(Student student)
+        public Response CreateStudent(Student student)
         {
             if (student == null)
             {
@@ -49,6 +52,7 @@ namespace ClientUI
             };
             var response = SendRequest(request);
             OnCreateStudent(response);
+            return response;
         }
 
         private Response SendRequest(Request request)
