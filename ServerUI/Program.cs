@@ -30,6 +30,7 @@ namespace ServerUI
             var students = new List<Student>();
             students.Add(new Student
             {
+                Id = 0,
                 Name = "Name 1",
                 SubjectMarks = new List<SubjectMark>
                 {
@@ -38,6 +39,7 @@ namespace ServerUI
             });
             students.Add(new Student
             {
+                Id = 1,
                 Name = "Name 2",
                 SubjectMarks = new List<SubjectMark>
                 {

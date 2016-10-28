@@ -34,9 +34,6 @@ namespace ClientUI
             var response = SendRequest(request);
             OnRequestStudents(response);
             return response;
-            //String status = "=>Command sent:view data";
-            //Отображеем служебную информацию в клиентском ListBox
-            //listBox1.Items.Add(status);
         }
 
         public Response CreateStudent(Student student)
@@ -52,6 +49,38 @@ namespace ClientUI
             };
             var response = SendRequest(request);
             OnCreateStudent(response);
+            return response;
+        }
+
+        public Response UpdateStudent(Student student)
+        {
+            if (student == null)
+            {
+                throw new ArgumentNullException(nameof(student));
+            }
+            var request = new Request
+            {
+                CommandName = Commands.Update,
+                Student = student
+            };
+            var response = SendRequest(request);
+            OnUpdateStudent(response);
+            return response;
+        }
+
+        public Response DeleteStudent(Student student)
+        {
+            if (student == null)
+            {
+                throw new ArgumentNullException(nameof(student));
+            }
+            var request = new Request
+            {
+                CommandName = Commands.Delete,
+                Student = student
+            };
+            var response = SendRequest(request);
+            OnDeleteStudent(response);
             return response;
         }
 

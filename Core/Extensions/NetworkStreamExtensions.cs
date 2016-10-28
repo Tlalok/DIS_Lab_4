@@ -25,5 +25,11 @@ namespace Core.Extensions
             } while (networkStream.DataAvailable);
             return myCompleteMessage.ToString();
         }
+
+        public static void SendUtf8String(this NetworkStream networkStream, string text)
+        {
+            var toSent = Encoding.UTF8.GetBytes(text);
+            networkStream.Write(toSent, 0, toSent.Length);
+        }
     }
 }

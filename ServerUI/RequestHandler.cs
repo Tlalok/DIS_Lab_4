@@ -17,21 +17,21 @@ namespace ServerUI
         private ServerForm form = null;
         private NetworkStream networkStream;
         private string fileName;
-        private int fileCount;
 
         private readonly List<ICommand> commands;
 
-        public RequestHandler(NetworkStream networkStream, string fileName, int fileCount, ServerForm form)
+        public RequestHandler(NetworkStream networkStream, string fileName, ServerForm form)
         {
             this.networkStream = networkStream;
             this.fileName = fileName;
-            this.fileCount = fileCount;
             this.form = form;
 
             commands = new List<ICommand>
             {
                 new ViewCommand(networkStream, fileName),
-                new CreateCommand(networkStream, fileName)
+                new CreateCommand(networkStream, fileName),
+                new UpdateCommand(networkStream, fileName),
+                new DeleteCommand(networkStream, fileName)
             };
         }
 

@@ -12,7 +12,6 @@ namespace ServerUI
     public class Server
     {
         private string fileName = "data.xml";
-        private int fileCount = 0;
         private IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 11000);
 
         private ServerForm form;
@@ -44,7 +43,7 @@ namespace ServerUI
                 if (client.Connected)
                 {
                     var ns = client.GetStream();
-                    var requestHandler = new RequestHandler(ns, fileName, fileCount, form);
+                    var requestHandler = new RequestHandler(ns, fileName, form);
                     Thread thread = requestHandler.Start();
                 }
             }
