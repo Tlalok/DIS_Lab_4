@@ -143,9 +143,11 @@
             // 
             // serverResponseTextBox
             // 
+            this.serverResponseTextBox.BackColor = System.Drawing.Color.White;
             this.serverResponseTextBox.Location = new System.Drawing.Point(11, 245);
             this.serverResponseTextBox.Multiline = true;
             this.serverResponseTextBox.Name = "serverResponseTextBox";
+            this.serverResponseTextBox.ReadOnly = true;
             this.serverResponseTextBox.Size = new System.Drawing.Size(304, 183);
             this.serverResponseTextBox.TabIndex = 9;
             // 

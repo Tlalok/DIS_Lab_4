@@ -6,23 +6,18 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Core.Entities;
 
 namespace ServerUI
 {
     public class Server
     {
         private string fileName = "data.xml";
-        private IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 11000);
-
-        private ServerForm form;
+        private readonly IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 11000);
         private Thread serverThread;
-
         private bool end = false;
 
-        public Server(ServerForm form)
-        {
-            this.form = form;
-        }
+        public event Action<Request> OnRequestRecieving;
 
         public void Run()
         {
@@ -43,8 +38,8 @@ namespace ServerUI
                 if (client.Connected)
                 {
                     var ns = client.GetStream();
-                    var requestHandler = new RequestHandler(ns, fileName, form);
-                    Thread thread = requestHandler.Start();
+                    var requestHandler = new RequestHandler(ns, fileName, OnRequestRecieving);
+                    var thread = requestHandler.Start();
                 }
             }
 

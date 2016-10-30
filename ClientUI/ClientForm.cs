@@ -2,13 +2,9 @@
 using Core.Entities;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Sockets;
 using System.Windows.Forms;
 
 namespace ClientUI
@@ -30,7 +26,7 @@ namespace ClientUI
 
         private void viewButton_Click(object sender, EventArgs e)
         {
-            client.RequestStudents();
+            TrySendRequest(() => client.RequestStudents());
         }
 
         private void ViewResponseHandler(Response response)
@@ -39,11 +35,8 @@ namespace ClientUI
             {
                 return;
             }
-            //MessageBox.Show(string.Join(", ", response.Students.Select(s => s.Name)));
-            var message = string.Format("{0}{1}: Data request was performed successfuly.", Environment.NewLine, DateTime.Now.ToString("HH:mm:ss"));
-            serverResponseTextBox.AppendText(message);
+            LogMessage("Data request was performed successfuly.");
             UpdateListBox(response.Students);
-
         }
 
         private void createButton_Click(object sender, EventArgs e)
@@ -57,7 +50,7 @@ namespace ClientUI
                 Name = nameTextBox.Text,
                 SubjectMarks = GenerateMarkList()
             };
-            client.CreateStudent(newStudent);
+            TrySendRequest(() => client.CreateStudent(newStudent));
         }
 
         private void CreateResponseHandler(Response response)
@@ -66,9 +59,7 @@ namespace ClientUI
             {
                 return;
             }
-            //MessageBox.Show(response.Status.ToString());
-            var message = string.Format("{0}{1}: Create request was performed successfuly.", Environment.NewLine, DateTime.Now.ToString("HH:mm:ss"));
-            serverResponseTextBox.AppendText(message);
+            LogMessage("Create request was performed successfuly.");
             UpdateListBox(response.Students);
         }
 
@@ -89,7 +80,7 @@ namespace ClientUI
                 Name = nameTextBox.Text,
                 SubjectMarks = GenerateMarkList()
             };
-            client.UpdateStudent(newStudentData);
+            TrySendRequest(() => client.UpdateStudent(newStudentData));
         }
 
         private void UpdateResponseHandler(Response response)
@@ -98,9 +89,7 @@ namespace ClientUI
             {
                 return;
             }
-            //MessageBox.Show(response.Status.ToString());
-            var message = string.Format("{0}{1}: Update request was performed successfuly.", Environment.NewLine, DateTime.Now.ToString("HH:mm:ss"));
-            serverResponseTextBox.AppendText(message);
+            LogMessage("Update request was performed successfuly.");
             UpdateListBox(response.Students);
         }
 
@@ -111,7 +100,7 @@ namespace ClientUI
             {
                 return;
             }
-            client.DeleteStudent(selectedStudent);
+            TrySendRequest(() => client.DeleteStudent(selectedStudent));
         }
 
         private void DeleteResponseHandler(Response response)
@@ -120,9 +109,7 @@ namespace ClientUI
             {
                 return;
             }
-            //MessageBox.Show(response.Status.ToString());
-            var message = string.Format("{0}{1}: Delete request was performed successfuly.", Environment.NewLine, DateTime.Now.ToString("HH:mm:ss"));
-            serverResponseTextBox.AppendText(message);
+            LogMessage("Delete request was performed successfuly.");
             UpdateListBox(response.Students);
         }
 
@@ -130,14 +117,13 @@ namespace ClientUI
         {
             if (response.Status == OperationStatus.Error)
             {
-                var message = string.Format("{0}{1}: Request failed.{2}", Environment.NewLine, DateTime.Now.ToString("HH:mm:ss"), response.ErrorMessage);
+                var message =
+                    $"{Environment.NewLine}{DateTime.Now.ToString("HH:mm:ss")}: Request failed. {response.ErrorMessage}";
                 serverResponseTextBox.AppendText(message);
                 return true;
             }
             return false;
         }
-
-        
 
         private Student GetSelectedStudent()
         {
@@ -208,6 +194,27 @@ namespace ClientUI
             mathNumericUpDown.Value = selectedStudent.SubjectMarks.Single(sm => string.Equals(sm.Subject, Subjects.Math, StringComparison.InvariantCultureIgnoreCase)).Mark;
             DisNumericUpDown.Value = selectedStudent.SubjectMarks.Single(sm => string.Equals(sm.Subject, Subjects.Dis, StringComparison.InvariantCultureIgnoreCase)).Mark;
             OopNumericUpDown.Value = selectedStudent.SubjectMarks.Single(sm => string.Equals(sm.Subject, Subjects.Oop, StringComparison.InvariantCultureIgnoreCase)).Mark;
+        }
+
+        private bool TrySendRequest(Action action)
+        {
+            try
+            {
+                action();
+                return true;
+            }
+            catch (SocketException ex)
+            {
+                LogMessage("Failure connecting to server.");
+            }
+            return false;
+        }
+
+        private void LogMessage(string message)
+        {
+            var textToAdd =
+                $"{Environment.NewLine}{DateTime.Now.ToString("HH:mm:ss")}: {message}";
+            serverResponseTextBox.AppendText(textToAdd);
         }
     }
 }
